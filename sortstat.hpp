@@ -1,5 +1,8 @@
 #include <utility>
 
+#ifndef _SORTSTAT_H
+#define _SORTSTAT_H
+
 template <typename T>
 class SortingStat {
    private:
@@ -9,16 +12,16 @@ class SortingStat {
 
    public:
     SortingStat() : elem() {}
-    
+
     SortingStat(T elem) : elem(elem) {}
 
-    SortingStat(const SortingStat& other): elem(other.elem) {
+    SortingStat(const SortingStat& other) : elem(other.elem) {
         ++assignmentCount;
     }
 
     SortingStat(SortingStat&& other) : elem(std::move(other.elem)) {
         ++assignmentCount;
-    } 
+    }
 
     SortingStat& operator=(const SortingStat& other) {
         elem = other.elem;
@@ -49,7 +52,7 @@ class SortingStat {
 
     friend auto operator<=>(const SortingStat& lhs, const SortingStat& rhs) {
         ++comparisonCount;
-        return lhs.elem <=> lhs.elem;
+        return lhs.elem <=> rhs.elem;
     }
 
     friend bool operator==(const SortingStat& lhs, const SortingStat& rhs) {
@@ -58,6 +61,10 @@ class SortingStat {
     }
 };
 
-template<typename T> unsigned long long SortingStat<T>::assignmentCount;
-template<typename T> unsigned long long SortingStat<T>::comparisonCount;
 
+template <typename T>
+unsigned long long SortingStat<T>::assignmentCount;
+template <typename T>
+unsigned long long SortingStat<T>::comparisonCount;
+
+#endif
