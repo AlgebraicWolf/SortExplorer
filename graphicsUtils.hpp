@@ -120,21 +120,21 @@ class Button : public sf::Drawable, public MouseInteractive {
 
     virtual ~Button();  // Destructor
 
-    void setString(const char* text);                  // Function for replacing string
-    void setString(const sf::String& text);            // Overload for sf::String, purely for the sake of copy convenience
-    void setFont(const sf::Font& font);                // Set font for button label
-    void setSize(const sf::Vector2f& size);            // Set button size
-    void setPosition(float x, float y);                // Set position of button
-    void setPosition(const sf::Vector2f& pos);         // setPosition overload for SFML 2D Vector type for the sake of convenience
-    void setFontColor(const sf::Color& color);         // Set font color for the button
-    void setClickFontColor(const sf::Color& color);    // Set font color for the button when it is clicked
-    void setBkgColor(const sf::Color& color);          // Set background color for the button
-    void setHoverBkgColor(const sf::Color& color);     // Set background color for the button when it is hovered over
-    void setClickBkgColor(const sf::Color& color);     // Set background color for the button when it is clicked
-    void setCharacterSize(unsigned int size);          // Set font size for the button
-    void setOutlineColor(const sf::Color& color);      // Set outline color of the button
-    void setOutlineThickness(unsigned int thickness);  // Set outline thickness of the button
-    void setCallback();                                // Set callback function
+    void setString(const char* text);                        // Function for replacing string
+    void setString(const sf::String& text);                  // Overload for sf::String, purely for the sake of copy convenience
+    void setFont(const sf::Font& font);                      // Set font for button label
+    void setSize(const sf::Vector2f& size);                  // Set button size
+    void setPosition(float x, float y);                      // Set position of button
+    void setPosition(const sf::Vector2f& pos);               // setPosition overload for SFML 2D Vector type for the sake of convenience
+    void setFontColor(const sf::Color& color);               // Set font color for the button
+    void setClickFontColor(const sf::Color& color);          // Set font color for the button when it is clicked
+    void setBkgColor(const sf::Color& color);                // Set background color for the button
+    void setHoverBkgColor(const sf::Color& color);           // Set background color for the button when it is hovered over
+    void setClickBkgColor(const sf::Color& color);           // Set background color for the button when it is clicked
+    void setCharacterSize(unsigned int size);                // Set font size for the button
+    void setOutlineColor(const sf::Color& color);            // Set outline color of the button
+    void setOutlineThickness(unsigned int thickness);        // Set outline thickness of the button
+    void setCallback(const std::function<void(void)>& cbk);  // Set callback function
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;  // Virtual function for drawing, derived from sf::Drawable
 
@@ -280,6 +280,10 @@ void Button::onMousePress() {
 
 void Button::onMouseRelease() {
     onHoverEnter();
+
+    if (callback) {
+        callback();
+    }
 }
 
 void Button::onHoverEnter() {
@@ -296,4 +300,6 @@ bool Button::isHoveringOver(sf::Vector2f pos) {
     return bkgRect.getGlobalBounds().contains(pos);
 }
 
-void 
+void Button::setCallback(const std::function<void(void)>& cbk) {
+    callback = cbk;
+}
