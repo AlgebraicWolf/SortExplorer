@@ -25,6 +25,7 @@ int main() {
 
     sf::RenderWindow mainWindow(sf::VideoMode(1200, 700), "Sorting algorithm analyzer", sf::Style::None);
     mainWindow.clear();
+    mainWindow.setPosition(sf::Vector2i(50, 50));
     mainWindow.display();
 
     sf::Font font;
@@ -35,13 +36,13 @@ int main() {
 
     for (int i = 0; i < SORTS_NUM; i++) {
         sortButtons[i].setFont(font);
-        sortButtons[i].setFontColor(sf::Color::White);
+        sortButtons[i].setFontColor(sort_ptrs[i]->getPrimaryColor());
         sortButtons[i].setBkgColor(sf::Color::Black);
-        sortButtons[i].setHoverBkgColor(sf::Color(100, 100, 100));
-        sortButtons[i].setClickBkgColor(sf::Color::White);
+        sortButtons[i].setHoverBkgColor(sort_ptrs[i]->getSecondaryColor());
+        sortButtons[i].setClickBkgColor(sort_ptrs[i]->getPrimaryColor());
         sortButtons[i].setClickFontColor(sf::Color::Black);
         sortButtons[i].setOutlineThickness(2);
-        sortButtons[i].setOutlineColor(sf::Color::White);
+        sortButtons[i].setOutlineColor(sort_ptrs[i]->getPrimaryColor());
         sortButtons[i].setCharacterSize(30);
         sortButtons[i].setSize(sf::Vector2f(220, 80));
         sortButtons[i].setPosition(100 + 260 * i, 550);
@@ -75,6 +76,8 @@ int main() {
     // myButton.setCallback([]() { std::cout << "Нажата кнопка 1" << std::endl; });
     // myButton2.setCallback([]() { std::cout << "Нажата кнопка 2" << std::endl; });
 
+    bool updated = true;
+
     while (mainWindow.isOpen()) {
         sf::Event event;
 
@@ -87,12 +90,16 @@ int main() {
                 default:
                     break;
             }
-            eventHandler.handleEvent(event);
+            updated = eventHandler.handleEvent(event);
         }
-        for (int i = 0; i < SORTS_NUM; i++) {
-            mainWindow.draw(sortButtons[i]);
+
+        if (updated) {
+            for (int i = 0; i < SORTS_NUM; i++) {
+                mainWindow.draw(sortButtons[i]);
+            }
+            mainWindow.display();
+            updated = false;
         }
-        mainWindow.display();
     }
 
     return 0;

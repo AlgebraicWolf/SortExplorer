@@ -43,20 +43,23 @@ class MouseInteractiveEH {
     // MouseInteractiveEH(MouseInteractiveEH&& other);                  // Move constructor
     // MouseInteractiveEH& operator=(MouseInteractive&& other);         // Move assignment
 
-    void handleEvent(const sf::Event& event);  // Handle event
+    bool handleEvent(const sf::Event& event);  // Handle event
     void attach(MouseInteractive& obj);        // Add object for handling
 };
 
-void MouseInteractiveEH::handleEvent(const sf::Event& event) {
+bool MouseInteractiveEH::handleEvent(const sf::Event& event) {
+    bool updated = false;
     for (MouseInteractive* el : trackedObjects) {
         switch (event.type) {
             case sf::Event::MouseMoved:
                 if (el->isHoveringOver(sf::Vector2f(event.mouseMove.x, event.mouseMove.y)) && !el->isHovered) {
                     el->onHoverEnter();
                     el->isHovered = true;
+                    updated = true;
                 } else if (!el->isHoveringOver(sf::Vector2f(event.mouseMove.x, event.mouseMove.y)) && el->isHovered && !el->isPressed) {
                     el->onHoverExit();
                     el->isHovered = false;
+                    updated = true;
                 }
                 break;
 
@@ -64,6 +67,7 @@ void MouseInteractiveEH::handleEvent(const sf::Event& event) {
                 if (el->isHoveringOver(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
                     el->isPressed = true;
                     el->onMousePress();
+                    updated = true;
                 }
                 break;
 
@@ -78,6 +82,7 @@ void MouseInteractiveEH::handleEvent(const sf::Event& event) {
                         el->isPressed = false;
                     }
                     el->isPressed = false;
+                    updated = true;
                 }
                 break;
 
@@ -85,6 +90,8 @@ void MouseInteractiveEH::handleEvent(const sf::Event& event) {
                 break;
         }
     }
+
+    return updated;
 }
 
 void MouseInteractiveEH::attach(MouseInteractive& obj) {

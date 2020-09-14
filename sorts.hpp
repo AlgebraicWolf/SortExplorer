@@ -8,6 +8,14 @@ class BubbleSort : public AnnotatedSort<T> {
         return "Bubble Sort";
     }
 
+    sf::Color getPrimaryColor() {
+        return sf::Color(168, 255, 151);
+    }
+
+    sf::Color getSecondaryColor() {
+        return sf::Color(90, 133, 79);
+    }
+
     void operator()(T *arr, size_t size) {
         using std::swap;
         for (int i = 1; i < size; i++) {
@@ -25,6 +33,14 @@ class InsertionSort : public AnnotatedSort<T> {
    public:
     const char *getName() {
         return "Insertion sort";
+    }
+
+    sf::Color getPrimaryColor() {
+        return sf::Color(255, 151, 168);
+    }
+
+    sf::Color getSecondaryColor() {
+        return sf::Color(133, 79, 90);
     }
 
     void operator()(T *arr, size_t size) {
@@ -48,6 +64,14 @@ class SelectionSort : public AnnotatedSort<T> {
    public:
     const char *getName() {
         return "Selection sort";
+    }
+
+    sf::Color getPrimaryColor() {
+        return sf::Color(255, 194, 151);
+    }
+
+    sf::Color getSecondaryColor() {
+        return sf::Color(133, 100, 79);
     }
 
     void operator()(T *arr, size_t size) {
@@ -75,9 +99,18 @@ class QuickSort : public AnnotatedSort<T> {
         return "QuickSort";
     }
 
+    sf::Color getPrimaryColor() {
+        return sf::Color(151, 186, 255);
+    }
+
+    sf::Color getSecondaryColor() {
+        return sf::Color(79, 100, 133);
+    }
+
     void operator()(T *arr, size_t size) {
         quickSort(arr, 0, size - 1);
     }
+    
 
    private:
     size_t partition(T *arr, size_t begin, size_t end) {
