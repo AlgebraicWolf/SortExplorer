@@ -20,6 +20,14 @@ class MouseInteractive {
     virtual void onHoverEnter() = 0;
     virtual void onHoverExit() = 0;
     virtual bool isHoveringOver(sf::Vector2f pos) = 0;
+    MouseInteractive() {
+        isHovered = false;
+        isPressed = false;
+    }
+
+    void printOutDesctiptor() {
+        printf("I am %p and my descriptor points to %p\n", this, *descriptor);
+    }
 
     virtual ~MouseInteractive() {
         detach();
@@ -28,7 +36,10 @@ class MouseInteractive {
 
 void MouseInteractive::detach() {
     if (containingList) {
+        printf("Detaching interactive element %p =?= %p from element list with address %p\n", *descriptor, this, containingList);
+
         containingList->erase(descriptor);
+        containingList = nullptr;
     }
 }
 
@@ -42,6 +53,15 @@ class MouseInteractiveEH {
     // MouseInteractiveEH& operator=(const MouseInteractiveEH& other);  // Copy assignment
     // MouseInteractiveEH(MouseInteractiveEH&& other);                  // Move constructor
     // MouseInteractiveEH& operator=(MouseInteractive&& other);         // Move assignment
+
+    ~MouseInteractiveEH() {
+        // Make all elements seem detached
+        for(auto it = trackedObjects.begin(); it != trackedObjects.end(); ) {
+            (*(it++))->detach();
+        }
+
+        printf("MouseInteractive Event Handler with address %p is dead\n", this);
+    }
 
     bool handleEvent(const sf::Event& event);  // Handle event
     void attach(MouseInteractive& obj);        // Add object for handling
@@ -95,8 +115,10 @@ bool MouseInteractiveEH::handleEvent(const sf::Event& event) {
 void MouseInteractiveEH::attach(MouseInteractive& obj) {
     trackedObjects.push_back(&obj);
     obj.containingList = &trackedObjects;
-    obj.descriptor = trackedObjects.end();
-    --obj.descriptor;
+    obj.descriptor = --trackedObjects.end();
+
+    printf("Attaching interactive element with address %p =?= %p\n", &obj, *obj.descriptor);
+    obj.printOutDesctiptor();
 }
 
 class Button : public sf::Drawable, public MouseInteractive {
