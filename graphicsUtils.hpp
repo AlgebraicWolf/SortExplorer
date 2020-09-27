@@ -75,11 +75,9 @@ bool MouseInteractiveEH::handleEvent(const sf::Event& event) {
                 if (el->isPressed) {
                     if (el->isHoveringOver(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))) {
                         el->onMouseRelease();
-                        el->isPressed = false;
                     } else {
                         el->onHoverExit();
                         el->isHovered = false;
-                        el->isPressed = false;
                     }
                     el->isPressed = false;
                     updated = true;
@@ -97,7 +95,8 @@ bool MouseInteractiveEH::handleEvent(const sf::Event& event) {
 void MouseInteractiveEH::attach(MouseInteractive& obj) {
     trackedObjects.push_back(&obj);
     obj.containingList = &trackedObjects;
-    obj.descriptor = --trackedObjects.end();
+    obj.descriptor = trackedObjects.end();
+    --obj.descriptor;
 }
 
 class Button : public sf::Drawable, public MouseInteractive {

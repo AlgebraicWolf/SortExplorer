@@ -138,6 +138,7 @@ void benchmarkSort(AnnotatedSort<SortingStat<int>> &sort) {
         sort(arr, i);
 
         printf("| %12.lu | %11.llu | %11.llu |\n", i, SortingStat<int>::getComparisonCount(), SortingStat<int>::getAssignmentCount());
+        delete[] arr;
     }
 
     printf("|%s|\n", "==========================================");
