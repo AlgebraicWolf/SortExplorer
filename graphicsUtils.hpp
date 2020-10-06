@@ -56,7 +56,7 @@ class MouseInteractiveEH {
 
     ~MouseInteractiveEH() {
         // Make all elements seem detached
-        for(auto it = trackedObjects.begin(); it != trackedObjects.end(); ) {
+        for (auto it = trackedObjects.begin(); it != trackedObjects.end();) {
             (*(it++))->detach();
         }
 
@@ -121,6 +121,106 @@ void MouseInteractiveEH::attach(MouseInteractive& obj) {
     obj.printOutDesctiptor();
 }
 
+class Plot : public sf::Drawable {
+   private:
+    struct limits_t {
+        float minX;
+        float maxX;
+        float minY;
+        float maxY;
+    };
+
+    limits_t currentLimits;
+
+    std::vector<sf::VertexArray> vertexArrays;
+
+    std::vector<sf::Color> colors;
+    std::vector<std::vector<sf::Vector2f>> dataPointsVector;
+
+    sf::RectangleShape bkgRect;
+    sf::Text xLabel;
+    sf::Text yLabel;
+
+    void recomputeVertexArrays();
+
+
+   public:
+    Plot(); // Default constructor
+
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;  // Drawing function
+    void resetPlot();                                                                     // Clear plot
+    void plot(std::vector<sf::Vector2f> dataPoints, const sf::Color& lineColor);          // Add the graph onto the plot
+
+    void setSize(const sf::Vector2f& size);     // Set plot size
+    void setPosition(float x, float y);         // Set plot position
+    void setPosition(const sf::Vector2f& pos);  // setPosition overload for SFML 2D Vector type for the sake of convenience
+    void setXString(const char* text);          // Set label for X axis
+    void setXString(const sf::String& text);    // Overload for sf::String, purely for the sake of copy convenience
+    void setYString(const char* text);          // Set label for X axis
+    void setYString(const sf::String& text);    // Overload for sf::String, purely for the sake of copy convenience
+};
+
+void Plot::setSize(const sf::Vector2f& size) {
+    bkgRect.setSize(size);
+}
+
+void Plot::setPosition(float x, float y) {
+
+}
+
+void Plot::setPosition(const sf::Vector2f& pos) {
+
+}
+
+void Plot::setXString(const char* text) {
+    xLabel.setString(text);
+}
+
+void Plot::setXString(const sf::String& text) {
+    xLabel.setString(text);
+}
+
+void Plot::resetPlot() {
+    colors.clear();
+    dataPointsVector.clear();
+}
+
+void Plot::plot(std::vector<sf::Vector2f> dataPoints, const sf::Color& lineColor) {
+    dataPointsVector.emplace_back(dataPoints);
+    colors.emplace_back(lineColor);
+}
+
+void Plot::recomputeVertexArrays() {
+    if (dataPointsVector.size()) {
+        currentLimits.minX = dataPointsVector[0][0].x;
+        currentLimits.maxX = dataPointsVector[0][0].x;
+        currentLimits.minY = dataPointsVector[0][0].y;
+        currentLimits.maxY = dataPointsVector[0][0].y;
+
+        for (auto& pointSeries : dataPointsVector) {
+            for (auto& point : pointSeries) {
+                if (point.x < currentLimits.minX) {
+                    currentLimits.minX = point.x;
+                } else if (point.x > currentLimits.maxX) {
+                    currentLimits.maxX = point.x;
+                }
+
+                if (point.y < currentLimits.minY) {
+                    currentLimits.minY = point.y;
+                } else if (point.y > currentLimits.maxY) {
+                    currentLimits.maxY = point.y;
+                }
+            }
+        }
+
+        vertexArrays.clear();
+
+        for (auto& pointSeries : dataPointsVector) {
+            vertexArrays.emplace_back(sf::Lines, pointSeries.size());
+        }
+    }
+}
+
 class Button : public sf::Drawable, public MouseInteractive {
    private:
     sf::RectangleShape bkgRect;
@@ -164,7 +264,7 @@ class Button : public sf::Drawable, public MouseInteractive {
     void setOutlineThickness(unsigned int thickness);        // Set outline thickness of the button
     void setCallback(const std::function<void(void)>& cbk);  // Set callback function
 
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;  // Virtual function for drawing, derived from sf::Drawable
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;  // Virtual function for drawing, derived from sf::Drawable
 
     virtual void onMousePress();
     virtual void onMouseRelease();
